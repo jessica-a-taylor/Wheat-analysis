@@ -40,6 +40,11 @@ write.csv(nextflowOutput, "Wheat-analysis/Data/Nextflow output summary.csv")
 
 # Convert 'nextflowOutput dataset into bedfile for the bt.intersect function.
 #nextflowOutput <- nextflowOutput[order(nextflowOutput$seqnames, nextflowOutput$start, nextflowOutput$end),]
+colnames(nextflowOutput)[1] <- "chr"
+nextflowOutput$chr <- as.character(nextflowOutput$chr)
+nextflowOutput$start <- as.numeric(nextflowOutput$start)
+nextflowOutput$end <- as.numeric(nextflowOutput$end)
+
 nextflowOutput <- bedr.sort.region(nextflowOutput, check.chr = FALSE)
 nextflowOutputBed <- GRanges(nextflowOutput[,c(1:3,8)])
 
