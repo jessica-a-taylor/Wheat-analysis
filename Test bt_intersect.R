@@ -112,6 +112,15 @@ df <- sampleGenes[[geneSet]]
     queryBed <- geneRegions[[region]][,c("Gene","seqnames","start","end","width")]
     #queryBed <- queryBed[order(queryBed$seqnames, queryBed$start, queryBed$Gene),]
     
+    queryBed <- data.frame(chr = queryBed$seqnames,
+                              start = queryBed$start,
+                              end = queryBed$end,
+                              Gene = queryBed$Gene)
+    
+    queryBed$chr <- as.character(queryBed$chr)
+    queryBed$start <- as.integer(queryBed$start)
+    queryBed$end <- as.integer(queryBed$end)
+    
     queryBed <- bedr.sort.region(queryBed, check.chr = FALSE)
 
       queryBed <- GRanges(queryBed)
