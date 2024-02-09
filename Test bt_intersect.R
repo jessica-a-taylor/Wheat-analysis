@@ -108,10 +108,10 @@ df <- sampleGenes[[geneSet]]
     # Filter for the current modification/TF.
     peaksPerModification <- nextflowOutputBed[which(nextflowOutputBed$Mod.TF==mod),]
     
-      # Create a bed file with the coordinates for the current gemonic region.
+    # Create a dataframe with the coordinates for the current gemonic region.
     queryBed <- geneRegions[[region]][,c("Gene","seqnames","start","end","width")]
-    #queryBed <- queryBed[order(queryBed$seqnames, queryBed$start, queryBed$Gene),]
-    
+
+    # Ensure the correct format for bedr.sort.region.
     queryBed <- data.frame(chr = queryBed$seqnames,
                               start = queryBed$start,
                               end = queryBed$end,
@@ -121,6 +121,7 @@ df <- sampleGenes[[geneSet]]
     queryBed$start <- as.integer(queryBed$start)
     queryBed$end <- as.integer(queryBed$end)
     
+    # Sort and convert to a bed file.
     queryBed <- bedr.sort.region(queryBed, check.chr = FALSE)
 
       queryBed <- GRanges(queryBed)
@@ -130,76 +131,76 @@ df <- sampleGenes[[geneSet]]
       overlap <- bt.intersect(peaksPerModification, queryBed, wo = TRUE, sorted = TRUE) 
       
       # Merge multiple peaks overlapping the same region.
-      # Determine the proportion of overlap, and store in 'mergedOverlap'
-      #mergedOverlap <- data.frame()
-      #
-      #for (gene in unique(geneRegions[[region]]$Gene)) {
-      #  row <- which(geneRegions[[region]]$Gene == gene)
-      #  
-      #  # If the gene overlaps with one or more ChIP-seq peaks in the current 
-      #  # region, find the sum of the peaks.
-      #  if (gene %in% overlap$V12) {
-      #    peakOverlaps <- overlap[overlap$V12==gene,]
-      #    
-      #    mergedOverlap <- rbind(mergedOverlap, data.frame(Gene = gene,
-      #                                                     seqnames = geneRegions[[region]][row, "seqnames"],
-      #                                                     start = geneRegions[[region]][row, "start"],
-      #                                                     end = geneRegions[[region]][row, "end"],
-      #                                                     width = geneRegions[[region]][row, "width"],
-      #                                                     overlap = sum(peakOverlaps$V13)/peakOverlaps$V10[1]))
-      #    
-      #    # If the gene does not overlap with a ChIP-seq peak in the current 
-      #    # region, overlap equals zero.
-      #  } else mergedOverlap <- rbind(mergedOverlap, data.frame(Gene = gene,
-      #                                                          seqnames = geneRegions[[region]][row, "seqnames"],
-      #                                                          start = geneRegions[[region]][row, "start"],
-      #                                                          end = geneRegions[[region]][row, "end"],
-      #                                                          width = geneRegions[[region]][row, "width"],
-      #                                                          overlap = 0))
-      #  
-      #}
-      ## Maximum proportion of overlap equals 1.
-      #mergedOverlap[which(mergedOverlap$overlap > 1), "overlap"] <- 1
-      #
-      ## Add the overlaps data for all genes in all regions to 'allProportions_data'.
-      #allProportions_data <- rbind(allProportions_data, data.frame(Gene = mergedOverlap$Gene,
-      #                                                             seqnames = mergedOverlap$seqnames,
-      #                                                             start = mergedOverlap$start,
-      #                                                             end = mergedOverlap$end, 
-      #                                                             width = mergedOverlap$width,
-      #                                                             region = rep(region, times = nrow(mergedOverlap)),
-      #                                                             Mod.TF = rep(mod, times = nrow(mergedOverlap)),
-      #                                                             overlap = mergedOverlap$overlap,
-      #                                                             geneSet = rep(geneSet, times = nrow(mergedOverlap)),
-      #                                                             axisGroup = rep(geneRegionAxisLocations(region), times = nrow(mergedOverlap))))
-      #
-      ## Add the average overlap across genes in each region to 'averageProportions_data'.
-      #averageProportions_data <- rbind(averageProportions_data, data.frame(region = region,
-      #                                                                     Mod.TF = mod,
-      #                                                                     mean.overlap = mean(mergedOverlap$overlap),
-      #                                                                     sd.overlap = sd(mergedOverlap$overlap),
-      #                                                                     frequency = signif((nrow(mergedOverlap[which(mergedOverlap$overlap>0.3),])/nrow(mergedOverlap))*100, digits = 3),
-      #                                                                     geneSet = geneSet,
-      #                                                                     axisGroup = geneRegionAxisLocations(region)))
-    #
-    # Add the 'proportions' datasets to the corresponding excel worksheet.
-    #writeData(allProportions_wb, sheet = mod, allProportions_data)
-    #writeData(averageProportions_wb, sheet = mod, averageProportions_data)
-    #
-    ## Determine the frequency of overlap across all regions, except
-    ## the intergenic space.
-    #frequency_data <- rbind(frequency_data, 
-    #                        data.frame(Mod.TF = mod,
-    #                                   frequency = length(unique(allProportions_data[which(allProportions_data$overlap > 0 &
-    #                                                                                         grepl("Intergenic", allProportions_data$region)==FALSE), 
-    #                                                                                 "Gene"]))/length(unique(allProportions_data$Gene))*100,
-    #                                   geneSet = str_match(geneSet, "^.* ([a-z]+)$")[,2],
-    #                                   genotype = str_match(geneSet, "^(.*) [a-z]+$")[,2]))
-    #
-    ## Add the 'frequencies' data to the corresponding excel worksheet.
-    #writeData(allFrequency_wb, sheet = mod, frequency_data)
+     #Determine the proportion of overlap, and store in 'mergedOverlap'
+    mergedOverlap <- data.frame()
+    
+    for (gene in unique(geneRegions[[region]]$Gene)) {
+      row <- which(geneRegions[[region]]$Gene == gene)
+      
+      # If the gene overlaps with one or more ChIP-seq peaks in the current 
+      # region, find the sum of the peaks.
+      if (gene %in% overlap$V12) {
+        peakOverlaps <- overlap[overlap$V12==gene,]
+        
+        mergedOverlap <- rbind(mergedOverlap, data.frame(Gene = gene,
+                                                         seqnames = geneRegions[[region]][row, "seqnames"],
+                                                         start = geneRegions[[region]][row, "start"],
+                                                         end = geneRegions[[region]][row, "end"],
+                                                         width = geneRegions[[region]][row, "width"],
+                                                         overlap = sum(peakOverlaps$V13)/peakOverlaps$V10[1]))
+        
+        # If the gene does not overlap with a ChIP-seq peak in the current 
+        # region, overlap equals zero.
+      } else mergedOverlap <- rbind(mergedOverlap, data.frame(Gene = gene,
+                                                              seqnames = geneRegions[[region]][row, "seqnames"],
+                                                              start = geneRegions[[region]][row, "start"],
+                                                              end = geneRegions[[region]][row, "end"],
+                                                              width = geneRegions[[region]][row, "width"],
+                                                              overlap = 0))
+      
+    }
+    # Maximum proportion of overlap equals 1.
+    mergedOverlap[which(mergedOverlap$overlap > 1), "overlap"] <- 1
+    
+    # Add the overlaps data for all genes in all regions to 'allProportions_data'.
+    allProportions_data <- rbind(allProportions_data, data.frame(Gene = mergedOverlap$Gene,
+                                                                 seqnames = mergedOverlap$seqnames,
+                                                                 start = mergedOverlap$start,
+                                                                 end = mergedOverlap$end, 
+                                                                 width = mergedOverlap$width,
+                                                                 region = rep(region, times = nrow(mergedOverlap)),
+                                                                 Mod.TF = rep(mod, times = nrow(mergedOverlap)),
+                                                                 overlap = mergedOverlap$overlap,
+                                                                 geneSet = rep(geneSet, times = nrow(mergedOverlap)),
+                                                                 axisGroup = rep(geneRegionAxisLocations(region), times = nrow(mergedOverlap))))
+    
+    # Add the average overlap across genes in each region to 'averageProportions_data'.
+    averageProportions_data <- rbind(averageProportions_data, data.frame(region = region,
+                                                                         Mod.TF = mod,
+                                                                         mean.overlap = mean(mergedOverlap$overlap),
+                                                                         sd.overlap = sd(mergedOverlap$overlap),
+                                                                         frequency = signif((nrow(mergedOverlap[which(mergedOverlap$overlap>0.3),])/nrow(mergedOverlap))*100, digits = 3),
+                                                                         geneSet = geneSet,
+                                                                         axisGroup = geneRegionAxisLocations(region)))
+    
+     # Add the 'proportions' datasets to the corresponding excel worksheet.
+    writeData(allProportions_wb, sheet = mod, allProportions_data)
+    writeData(averageProportions_wb, sheet = mod, averageProportions_data)
+    
+    # Determine the frequency of overlap across all regions, except
+    # the intergenic space.
+    frequency_data <- rbind(frequency_data, 
+                            data.frame(Mod.TF = mod,
+                                       frequency = length(unique(allProportions_data[which(allProportions_data$overlap > 0 &
+                                                                                             grepl("Intergenic", allProportions_data$region)==FALSE), 
+                                                                                     "Gene"]))/length(unique(allProportions_data$Gene))*100,
+                                       geneSet = str_match(geneSet, "^.* ([a-z]+)$")[,2],
+                                       genotype = str_match(geneSet, "^(.*) [a-z]+$")[,2]))
+    
+    # Add the 'frequencies' data to the corresponding excel worksheet.
+    writeData(allFrequency_wb, sheet = mod, frequency_data)
   
   # Save each worksheet to the corresponding workbook and export as an .xlsx file.
-  #saveWorkbook(allProportions_wb, paste(path_to_data_output, "All proportions/", geneSet, ".xlsx", sep = ""), overwrite = TRUE) 
-  #saveWorkbook(averageProportions_wb, paste(path_to_data_output, "Average proportions/", geneSet, ".xlsx", sep = ""), overwrite = TRUE)
-  #saveWorkbook(allFrequency_wb, paste(path_to_data_output, "All frequencies/", geneSet, ".xlsx", sep = ""), overwrite = TRUE)
+  saveWorkbook(allProportions_wb, paste(path_to_data_output, "All proportions/", geneSet, ".xlsx", sep = ""), overwrite = TRUE) 
+  saveWorkbook(averageProportions_wb, paste(path_to_data_output, "Average proportions/", geneSet, ".xlsx", sep = ""), overwrite = TRUE)
+  saveWorkbook(allFrequency_wb, paste(path_to_data_output, "All frequencies/", geneSet, ".xlsx", sep = ""), overwrite = TRUE)
