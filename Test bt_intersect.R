@@ -1,6 +1,7 @@
 # Test bedtools intersect.
 
 library(rtracklayer)
+library(bedtoolsr)
 
 # Specify paths for files needed for the analysis.
 path_to_significant_DEGs <- "Wheat-analysis/Data/Significant DEGs/"
@@ -38,6 +39,7 @@ write.csv(nextflowOutput, "Wheat-analysis/Data/Nextflow output summary.csv")
 
 # Convert 'nextflowOutput dataset into bedfile for the bt.intersect function.
 nextflowOutputBed <- GRanges(nextflowOutput[,c(1:3,8)])
+nextflowOutputBed <- bt.sort(nextflowOutputBed)
 
 # Import sample gene sets from 'Significant DEGs' folder. Store in a list.
 sampleGenes <- list()
@@ -101,6 +103,7 @@ df <- sampleGenes[[geneSet]]
     
       # Create a bed file with the coordinates for the current gemonic region.
       queryBed <- GRanges(geneRegions[[region]][,c("Gene","seqnames","start","end","width")])
+      quertBed <- bt.sort(queryBed)
       
       # Use bedtools intersect function to find the overlap between the genomic
       # region and ChIP-seq peaks for the current modification/TF.
