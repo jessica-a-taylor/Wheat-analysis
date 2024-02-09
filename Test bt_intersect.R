@@ -38,7 +38,7 @@ nextflowOutput <- getChIP_seq_data()
 write.csv(nextflowOutput, "Wheat-analysis/Data/Nextflow output summary.csv")
 
 # Convert 'nextflowOutput dataset into bedfile for the bt.intersect function.
-nextflowOutput <- nextflowOutput[order(nextflowOutput$seqnames, nextflowOutput$start),]
+nextflowOutput <- nextflowOutput[order(nextflowOutput$seqnames, nextflowOutput$start, nextflowOutput$end),]
 nextflowOutputBed <- GRanges(nextflowOutput[,c(1:3,8)])
 
 # Import sample gene sets from 'Significant DEGs' folder. Store in a list.
@@ -103,9 +103,8 @@ df <- sampleGenes[[geneSet]]
     
       # Create a bed file with the coordinates for the current gemonic region.
     queryBed <- geneRegions[[region]][,c("Gene","seqnames","start","end","width")]
-    queryBed <- queryBed[order(queryBed$seqnames),]
-    queryBed <- queryBed[order(queryBed$start),]
-    
+    queryBed <- queryBed[order(queryBed$seqnames, queryBed$start, queryBed$end),]
+
       queryBed <- GRanges(queryBed)
 
       # Use bedtools intersect function to find the overlap between the genomic
