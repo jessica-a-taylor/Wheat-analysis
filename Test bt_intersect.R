@@ -1,5 +1,7 @@
 # Test bedtools intersect.
 
+library(rtracklayer)
+
 # Specify paths for files needed for the analysis.
 path_to_significant_DEGs <- "Wheat-analysis/Data/Significant DEGs/"
 path_to_all_DEGs <- "Wheat-analysis/Data/All DEGs/"
