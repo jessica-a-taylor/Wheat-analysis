@@ -2,6 +2,7 @@
 
 library(rtracklayer)
 library(bedtoolsr)
+library(bedr)
 
 # Specify paths for files needed for the analysis.
 path_to_significant_DEGs <- "Wheat-analysis/Data/Significant DEGs/"
@@ -103,7 +104,9 @@ df <- sampleGenes[[geneSet]]
     
       # Create a bed file with the coordinates for the current gemonic region.
     queryBed <- geneRegions[[region]][,c("Gene","seqnames","start","end","width")]
-    queryBed <- queryBed[order(queryBed$seqnames, queryBed$start, queryBed$Gene),]
+    #queryBed <- queryBed[order(queryBed$seqnames, queryBed$start, queryBed$Gene),]
+    
+    queryBed <- bedr.sort.region(queryBed, check.chr = FALSE)
 
       queryBed <- GRanges(queryBed)
 
