@@ -103,7 +103,7 @@ df <- sampleGenes[[geneSet]]
     
       # Create a bed file with the coordinates for the current gemonic region.
     queryBed <- geneRegions[[region]][,c("Gene","seqnames","start","end","width")]
-    queryBed <- queryBed[order(queryBed$seqnames, queryBed$start, queryBed$end),]
+    queryBed <- queryBed[order(queryBed$Gene),]
 
       queryBed <- GRanges(queryBed)
 
