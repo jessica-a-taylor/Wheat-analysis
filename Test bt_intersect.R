@@ -110,7 +110,7 @@ df <- sampleGenes[[geneSet]]
 
       # Use bedtools intersect function to find the overlap between the genomic
       # region and ChIP-seq peaks for the current modification/TF.
-      overlap <- bt.intersect(peaksPerModification, queryBed, wo = TRUE) 
+      overlap <- bt.intersect(peaksPerModification, queryBed, wo = TRUE, sorted = TRUE) 
       
       # Merge multiple peaks overlapping the same region.
       # Determine the proportion of overlap, and store in 'mergedOverlap'
