@@ -30,7 +30,7 @@ source("Wheat-analysis/Functions/AxisGroup column.R")
 # Import ChIP-seq data using 'getChIP_seq_data.R function.
 source("Wheat-analysis/Functions/getChIP_seq_data.R")
 nextflowOutput <- getChIP_seq_data()
-write.csv(nextflowOutput, "Wheat-introgression-analysis/Data/Nextflow output summary.csv")
+write.csv(nextflowOutput, "Wheat-analysis/Data/Nextflow output summary.csv")
 
 # Convert 'nextflowOutput dataset into bedfile for the bt.intersect function.
 nextflowOutputBed <- GRanges(nextflowOutput[,c(1:3,8)])
