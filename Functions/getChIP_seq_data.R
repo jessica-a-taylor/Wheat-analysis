@@ -5,20 +5,20 @@ library(openxlsx)
 library(bedtoolsr)
 
 getChIP_seq_data <- function() {
-  source("Wheat-introgression-analysis/Functions/Gene width&range.R")
+  source("Wheat-analysis/Functions/Gene width&range.R")
   
-  ChIP_experiments <- as.data.frame(read.csv("Wheat-introgression-analysis/Data/ChIP experiment SRA data.csv"))
+  ChIP_experiments <- as.data.frame(read.csv("Wheat-analysis/Data/ChIP experiment SRA data.csv"))
 
   # Combine nextflow pipeline outputs into a single dataframe.
   nextflowOutput <- data.frame()
   
-  for (file in list.files(path = "Wheat-introgression-analysis/Data/Peakcaller output", pattern = "Peaks.bed")) {
+  for (file in list.files(path = "Wheat-analysis/Data/Peakcaller output", pattern = "Peaks.bed")) {
     
     # Rename file to include target modification/TF (if it has not been changed already).
     if (str_detect(file, "_SRR") == FALSE) {
       
-      file.rename(paste("Wheat-introgression-analysis/Data/Peakcaller output/", file, sep = ""), 
-                  paste("Wheat-introgression-analysis/Data/Peakcaller output/", ChIP_experiments[which(str_detect(ChIP_experiments$Sample.data, str_match(file,"^(SRR.*)_merged.*$")[,2])==TRUE), "Modification.TF"],
+      file.rename(paste("Wheat-analysis/Data/Peakcaller output/", file, sep = ""), 
+                  paste("Wheat-analysis/Data/Peakcaller output/", ChIP_experiments[which(str_detect(ChIP_experiments$Sample.data, str_match(file,"^(SRR.*)_merged.*$")[,2])==TRUE), "Modification.TF"],
                         "_", file, sep = "")) 
       
       file <- paste(ChIP_experiments[which(str_detect(ChIP_experiments$Sample.data, str_match(file,"^(SRR.*)_merged.*$")[,2])==TRUE), "Modification.TF"],
@@ -26,7 +26,7 @@ getChIP_seq_data <- function() {
     }
     
     # Merge all broad and narrow peaks datasets.
-    data <-  as.data.frame(import.bed(paste("Wheat-introgression-analysis/Data/Peakcaller output/", file, sep = "")))
+    data <-  as.data.frame(import.bed(paste("Wheat-analysis/Data/Peakcaller output/", file, sep = "")))
     
     # Add a column with the experiment code.
     data$experiment <- rep(str_match(file, "^.*_(SRR[0-9]+).*$")[,-1], times = nrow(data))

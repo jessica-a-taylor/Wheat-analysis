@@ -1,9 +1,9 @@
 # Specify paths for files needed for the analysis.
-path_to_significant_DEGs <- "Wheat-introgression-analysis/Data/Significant DEGs/"
-path_to_all_DEGs <- "Wheat-introgression-analysis/Data/All DEGs/"
-path_to_gene_list <- "Wheat-introgression-analysis/Data/Wheat protein coding genes.csv"
+path_to_significant_DEGs <- "Wheat-analysis/Data/Significant DEGs/"
+path_to_all_DEGs <- "Wheat-analysis/Data/All DEGs/"
+path_to_gene_list <- "Wheat-analysis/Data/Wheat protein coding genes.csv"
 
-path_to_data_output <- "Wheat-introgression-analysis/Data/Enrichment results/"
+path_to_data_output <- "Wheat-analysis/Data/Enrichment results/"
 
 # If not existing, create folders for the different data outputs of the enrichment analysis.
 for (folder in c("All frequencies", "All proportions", "Average proportions")) {
@@ -12,7 +12,7 @@ for (folder in c("All frequencies", "All proportions", "Average proportions")) {
   } else next
 }
 
-path_to_graph_output <- "Wheat-introgression-analysis/Graphs/"
+path_to_graph_output <- "Wheat-analysis/Graphs/"
 
 # If not existing, create folders for the graphical outputs of the enrichment analysis.
 for (folder in c("Enrichment per region", "Percent modified genes")) {
@@ -23,14 +23,14 @@ for (folder in c("Enrichment per region", "Percent modified genes")) {
 
 rm(folder)
 # Load required functions.
-source("Wheat-introgression-analysis/Functions/getGeneCoordinates.R")
-source("Wheat-introgression-analysis/Functions/Gene width&range.R")
-source("Wheat-introgression-analysis/Functions/AxisGroup column.R")
+source("Wheat-analysis/Functions/getGeneCoordinates.R")
+source("Wheat-analysis/Functions/Gene width&range.R")
+source("Wheat-analysis/Functions/AxisGroup column.R")
 
 # Import ChIP-seq data using 'getChIP_seq_data.R function.
-source("Wheat-introgression-analysis/Functions/getChIP_seq_data.R")
+source("Wheat-analysis/Functions/getChIP_seq_data.R")
 nextflowOutput <- getChIP_seq_data()
-write.csv(nextflowOutput, "Wheat-introgression-analysis/Data/Nextflow output summary.csv")
+write.csv(nextflowOutput, "Wheat-analysis/Data/Nextflow output summary.csv")
 
 # Convert 'nextflowOutput dataset into bedfile for the bt.intersect function.
 nextflowOutputBed <- GRanges(nextflowOutput[,c(1:3,8)])

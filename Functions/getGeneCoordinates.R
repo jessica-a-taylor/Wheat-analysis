@@ -1,6 +1,6 @@
 # Get the coordinates of each gene region.
 getGeneCoordinates <- function(df, genomeData) {
-  source("Wheat-introgression-analysis/Functions/getCoordinatesFunctions.R")
+  source("Wheat-analysis/Functions/getCoordinatesFunctions.R")
   
   geneRegions <- list()
   
