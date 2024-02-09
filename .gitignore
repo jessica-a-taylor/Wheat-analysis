@@ -1,3 +1,5 @@
 *.csv
 *.xlsx
 *.pdf
+*.bed
+.Rproj.user
