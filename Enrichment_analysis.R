@@ -1,3 +1,8 @@
+# Load required packages.
+source("Wheat-analysis/Functions/loadLibraries.R")
+loadLibraries()
+rm(loadLibraries)
+
 # Specify paths for files needed for the analysis.
 path_to_significant_DEGs <- "Wheat-analysis/Data/Significant DEGs/"
 path_to_all_DEGs <- "Wheat-analysis/Data/All DEGs/"
@@ -20,19 +25,20 @@ for (folder in c("Enrichment per region", "Percent modified genes")) {
     dir.create(file.path(paste(path_to_graph_output, folder, sep = "")))
   } else next
 }
-
 rm(folder)
+
 # Load required functions.
+source("Wheat-analysis/Functions/getChIP_seq_data.R")
 source("Wheat-analysis/Functions/getGeneCoordinates.R")
 source("Wheat-analysis/Functions/Gene width&range.R")
 source("Wheat-analysis/Functions/AxisGroup column.R")
 
 # Import ChIP-seq data using 'getChIP_seq_data.R function.
-source("Wheat-analysis/Functions/getChIP_seq_data.R")
 nextflowOutput <- getChIP_seq_data()
-write.csv(nextflowOutput, "Wheat-introgression-analysis/Data/Nextflow output summary.csv")
+rm(getChIP_seq_data)
 
 # Convert 'nextflowOutput dataset into bedfile for the bt.intersect function.
+nextflowOutput <- bedr.sort.region(nextflowOutput, check.chr = FALSE)
 nextflowOutputBed <- GRanges(nextflowOutput[,c(1:3,8)])
 
 # Import sample gene sets from 'Significant DEGs' folder. Store in a list.
@@ -100,11 +106,26 @@ for (geneSet in names(sampleGenes)) {
     
     for (region in names(geneRegions)) {
       # Create a bed file with the coordinates for the current gemonic region.
-      queryBed <- GRanges(geneRegions[[region]][,c("Gene","seqnames","start","end","width")])
+      # Create a dataframe with the coordinates for the current gemonic region.
+      queryBed <- geneRegions[[region]][,c("Gene","seqnames","start","end","width")]
+      
+      # Ensure the correct format for bedr.sort.region.
+      queryBed <- data.frame(chr = queryBed$seqnames,
+                             start = queryBed$start,
+                             end = queryBed$end,
+                             Gene = queryBed$Gene)
+      
+      queryBed$chr <- as.character(queryBed$chr)
+      queryBed$start <- as.integer(queryBed$start)
+      queryBed$end <- as.integer(queryBed$end)
+      
+      # Sort and convert to a bed file.
+      queryBed <- bedr.sort.region(queryBed, check.chr = FALSE)
+      queryBed <- GRanges(queryBed) 
       
       # Use bedtools intersect function to find the overlap between the genomic
       # region and ChIP-seq peaks for the current modification/TF.
-      overlap <- bt.intersect(peaksPerModification, queryBed, wo = TRUE) 
+      overlap <- bt.intersect(peaksPerModification, queryBed, wo = TRUE, sorted = TRUE) 
       
       # Merge multiple peaks overlapping the same region.
       # Determine the proportion of overlap, and store in 'mergedOverlap'
@@ -177,15 +198,16 @@ for (geneSet in names(sampleGenes)) {
     writeData(allFrequency_wb, sheet = mod, frequency_data)
   }
   # Save each worksheet to the corresponding workbook and export as an .xlsx file.
-  #saveWorkbook(allProportions_wb, paste(path_to_data_output, "All proportions/", geneSet, ".xlsx", sep = ""), overwrite = TRUE) 
-  #saveWorkbook(averageProportions_wb, paste(path_to_data_output, "Average proportions/", geneSet, ".xlsx", sep = ""), overwrite = TRUE)
-  #saveWorkbook(allFrequency_wb, paste(path_to_data_output, "All frequencies/", geneSet, ".xlsx", sep = ""), overwrite = TRUE)
+  saveWorkbook(allProportions_wb, paste(path_to_data_output, "All proportions/", geneSet, ".xlsx", sep = ""), overwrite = TRUE) 
+  saveWorkbook(averageProportions_wb, paste(path_to_data_output, "Average proportions/", geneSet, ".xlsx", sep = ""), overwrite = TRUE)
+  saveWorkbook(allFrequency_wb, paste(path_to_data_output, "All frequencies/", geneSet, ".xlsx", sep = ""), overwrite = TRUE)
 }
 
-rm(df, nextflowOutputBed, queryBed, allProportions_wb, averageProportions_wb, allProportions_data, allFrequency_wb, allFrequency_data, averageProportions_data, overlap, region, geneSet)
+rm(df, nextflowOutputBed, queryBed, allProportions_wb, averageProportions_wb, allProportions_data, allFrequency_wb, 
+   allFrequency_data, averageProportions_data, overlap, region, geneSet)
 
 # Plot results.
-# Import 'proportions' and 'frequencies' data fo all gene set into one dataframe.
+# Import 'proportions' and 'frequencies' data for all gene sets into one dataframe.
 allFrequency_results <- data.frame()
 
 for (mod in unique(nextflowOutput$Mod.TF)) {

@@ -1,12 +1,8 @@
-library(rtracklayer)
-library(glue)
-library(stringr)
-library(openxlsx)
-library(bedtoolsr)
-
 getChIP_seq_data <- function() {
+  # Load required functions.
   source("Wheat-analysis/Functions/Gene width&range.R")
   
+  # Import ChIP-seq metadata.
   ChIP_experiments <- as.data.frame(read.csv("Wheat-analysis/Data/ChIP experiment SRA data.csv"))
 
   # Combine nextflow pipeline outputs into a single dataframe.
@@ -35,9 +31,11 @@ getChIP_seq_data <- function() {
     nextflowOutput <- rbind(nextflowOutput, data)
   }
   
+  # Remove genes not assigned to a chromosome.
   nextflowOutput <- nextflowOutput[-which(nextflowOutput$seqnames == "Un"),]
+  colnames(nextflowOutput)[1] <- "chr"
   
-  # Add ranges column to 'nextflowOutput'.
+  # Add column to 'nextflowOutput' for the gene range (start - end).
   nextflowOutput$ranges <- getRange(nextflowOutput) 
   
   # Add column containing the chromatin modification/TF investigated.
@@ -63,6 +61,11 @@ getChIP_seq_data <- function() {
   
   # Remove rows with any remaining 'NAs'.
   nextflowOutput <- nextflowOutput[c(which(!is.na(nextflowOutput$Mod.TF))),]
+  
+  # Ensure data is of the correct type.
+  nextflowOutput$chr <- as.character(nextflowOutput$chr)
+  nextflowOutput$start <- as.numeric(nextflowOutput$start)
+  nextflowOutput$end <- as.numeric(nextflowOutput$end)
   
   return(nextflowOutput)
 }
