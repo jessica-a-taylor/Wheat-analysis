@@ -8,13 +8,13 @@ getChIP_seq_data <- function() {
   # Combine nextflow pipeline outputs into a single dataframe.
   nextflowOutput <- data.frame()
   
-  for (file in list.files(path = "Wheat-analysis/Data/Peakcaller output", pattern = "Peaks.bed")) {
+  for (file in list.files(path = "Wheat-analysis/Data/Peakcaller_output", pattern = "Peaks.bed")) {
     
     # Rename file to include target modification/TF (if it has not been changed already).
     if (str_detect(file, "_SRR") == FALSE) {
       
-      file.rename(paste("Wheat-analysis/Data/Peakcaller output/", file, sep = ""), 
-                  paste("Wheat-analysis/Data/Peakcaller output/", ChIP_experiments[which(str_detect(ChIP_experiments$Sample.data, str_match(file,"^(SRR.*)_merged.*$")[,2])==TRUE), "Modification.TF"],
+      file.rename(paste("Wheat-analysis/Data/Peakcaller_output/", file, sep = ""), 
+                  paste("Wheat-analysis/Data/Peakcaller_output/", ChIP_experiments[which(str_detect(ChIP_experiments$Sample.data, str_match(file,"^(SRR.*)_merged.*$")[,2])==TRUE), "Modification.TF"],
                         "_", file, sep = "")) 
       
       file <- paste(ChIP_experiments[which(str_detect(ChIP_experiments$Sample.data, str_match(file,"^(SRR.*)_merged.*$")[,2])==TRUE), "Modification.TF"],
@@ -22,7 +22,7 @@ getChIP_seq_data <- function() {
     }
     
     # Merge all broad and narrow peaks datasets.
-    data <-  as.data.frame(import.bed(paste("Wheat-analysis/Data/Peakcaller output/", file, sep = "")))
+    data <-  as.data.frame(import.bed(paste("Wheat-analysis/Data/Peakcaller_output/", file, sep = "")))
     
     # Add a column with the experiment code.
     data$experiment <- rep(str_match(file, "^.*_(SRR[0-9]+).*$")[,-1], times = nrow(data))
