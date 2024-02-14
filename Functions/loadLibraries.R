@@ -8,4 +8,6 @@ loadLibraries <- function() {
   library(bedr)
   library(glue)
   library(GenomicRanges)
+  library(dplyr)
+  library(rstatix)
 }
