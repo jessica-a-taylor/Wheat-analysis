@@ -14,10 +14,10 @@ getChIP_seq_data <- function() {
     if (str_detect(file, "_SRR") == FALSE) {
       
       file.rename(paste("Wheat-analysis/Data/Peakcaller_output/", file, sep = ""), 
-                  paste("Wheat-analysis/Data/Peakcaller_output/", ChIP_experiments[which(str_detect(ChIP_experiments$Sample.data, str_match(file,"^(SRR.*)_merged.*$")[,2])==TRUE), "Modification.TF"],
+                  paste("Wheat-analysis/Data/Peakcaller_output/", ChIP_experiments[which(str_detect(ChIP_experiments$Sample.data, str_match(file,"^(SRR.*)merged.*$")[,2])==TRUE), "Modification.TF"],
                         "_", file, sep = "")) 
       
-      file <- paste(ChIP_experiments[which(str_detect(ChIP_experiments$Sample.data, str_match(file,"^(SRR.*)_merged.*$")[,2])==TRUE), "Modification.TF"],
+      file <- paste(ChIP_experiments[which(str_detect(ChIP_experiments$Sample.data, str_match(file,"^(SRR.*)merged.*$")[,2])==TRUE), "Modification.TF"],
                     "_", file, sep = "")
     }
     
