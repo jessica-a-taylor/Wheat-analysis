@@ -3,6 +3,7 @@ loadLibraries <- function() {
   library(openxlsx)
   library(hash)
   library(ggplot2)
+  library(ggpubr)
   library(rtracklayer)
   library(bedtoolsr)
   library(bedr)
