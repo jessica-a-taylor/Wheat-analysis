@@ -7,6 +7,5 @@ loadLibraries <- function() {
   library(bedtoolsr)
   library(bedr)
   library(glue)
-  library(stringr)
-  library(openxlsx)
+  library(GenomicRanges)
 }
