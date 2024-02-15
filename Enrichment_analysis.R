@@ -38,8 +38,10 @@ nextflowOutput <- getChIP_seq_data()
 rm(getChIP_seq_data)
 
 # Convert 'nextflowOutput dataset into bedfile for the bt.intersect function.
-nextflowOutput <- bedr.sort.region(nextflowOutput, check.chr = FALSE)
-nextflowOutputBed <- GRanges(nextflowOutput[,c(1:3,8)])
+nextflowOutput_temp <- bedr.sort.region(nextflowOutput, check.chr = FALSE)
+nextflowOutputBed <- GRanges(nextflowOutput_temp[,c(1:3,8)])
+
+rm(nextflowOutput_temp)
 
 # Import sample gene sets from 'Significant DEGs' folder. Store in a list.
 sampleGenes <- list()
@@ -301,7 +303,7 @@ for (mod in unique(nextflowOutput$Mod.TF)) {
     font("caption", size = 12) +
     font("axis.text", size = 14) 
     
-  plot <- facet(plot, facet.by = "Genotype", nrow = 1)
+  plot <- facet(plot, facet.by = "genotype", nrow = 1)
   plot <- ggpar(plot, font.xtickslab = FALSE, ticks = FALSE, legend = "bottom", xlab = FALSE, legend.title = "",
                 font.ytickslab = 8)
   
