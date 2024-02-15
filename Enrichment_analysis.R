@@ -261,6 +261,8 @@ for (mod in unique(nextflowOutput$Mod.TF)) {
       # Set the limits of the y-axis.
       coord_cartesian(ylim= c(0,1.1), clip = "off") +
       
+      geom_text(data = averageProportions_results, aes(x = geneSet, y = mean.overlap+0.025, label = frequency), size = 2) +
+      
       # Set font sizes.
       font("title", size = 14) +
       font("ylab", size = 12) +
